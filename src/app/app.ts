@@ -317,7 +317,8 @@ export class App implements OnInit, AfterViewChecked {
   }
 
   getModelShortName(): string {
-    return this.llmService.selectedModelId().split('-')[0] || 'LLM';
+    const name = this.llmService.selectedModelId().split('-')[0] || 'LLM';
+    return name === 'SmolLM2' ? 'SmolLM' : name;
   }
 
   goHome() {
