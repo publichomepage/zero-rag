@@ -395,6 +395,9 @@ export class App implements OnInit, AfterViewChecked {
         } else if (baseUrl.includes('openrouter.ai')) {
           // OpenRouter standard
           url = baseUrl.includes('/api/v1') ? `${baseUrl}/chat/completions` : `${baseUrl}/api/v1/chat/completions`;
+        } else if (baseUrl.includes('api.deepseek.com')) {
+          // DeepSeek standard (often no /v1)
+          url = baseUrl.includes('/chat/completions') ? baseUrl : `${baseUrl}/chat/completions`;
         } else {
           // General OpenAI standard (OpenAI, Mistral, Groq, etc.)
           url = baseUrl.includes('/v1') ? `${baseUrl}/chat/completions` : `${baseUrl}/v1/chat/completions`;
