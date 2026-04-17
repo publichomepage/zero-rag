@@ -309,17 +309,16 @@ export class App implements OnInit, AfterViewChecked {
   }
 
   openSource(source: string) {
-    let repo = this.githubRepo().trim();
+    // Fallback to the main repo if settings are empty
+    let repo = (this.githubRepo() || 'publichomepage/zero-rag').trim();
     if (repo.endsWith('/')) repo = repo.slice(0, -1);
 
-    if (repo) {
-      // If source already has 'docs/' at the start, don't add it again
-      const path = source.startsWith('docs/') ? source : `docs/${source}`;
-      window.open(`https://github.com/${repo}/blob/main/${path}`, '_blank');
-    } else {
-      const path = source.startsWith('docs/') ? source : `/docs/${source}`;
-      window.open(path, '_blank');
-    }
+    // If source already has 'docs/' at the start, don't add it again
+    const path = source.startsWith('docs/') ? source : `docs/${source}`;
+    
+    // Always open on GitHub
+    const githubUrl = `https://github.com/${repo}/blob/main/${path}`;
+    window.open(githubUrl, '_blank');
   }
 
   private detectMarkdown(text: string): boolean {
