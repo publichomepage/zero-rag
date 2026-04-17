@@ -128,20 +128,20 @@ export class LlmService {
     const messages = [
       {
         role: 'system',
-        content: `You are a concise documentation assistant. Rules:
-1. Answer in 2-3 sentences maximum.
-2. If the Context has code, you MUST copy it exactly into your answer.
-3. Do NOT repeat the question, offer further help, or use emoji.
-4. Use ONLY information from the provided Context.`,
+        content: `You are a concise documentation assistant.
+Rules:
+- Answer in 2-3 sentences.
+- If the context contains code, include it.
+- Do NOT repeat the question or the word "Question:".
+- Use ONLY the provided context. If the answer isn't there, say you don't know.`
       },
-      // Strip any <think> blocks from history to prevent poisoning follow-up answers
       ...history.map(h => ({
         role: h.role,
-        content: h.content.replace(/<think>[\s\S]*?<\/think>/g, '').replace(/<think>[\s\S]*$/g, '').trim()
+        content: h.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
       })).filter(h => h.content.length > 0),
       {
         role: 'user',
-        content: `Context:\n${contextText}\n\nQuestion: ${question}`,
+        content: `Context:\n${contextText || 'No context available.'}\n\nTask: Use the context above to answer this question: ${question}`
       },
     ];
 

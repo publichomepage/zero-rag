@@ -95,8 +95,16 @@ export function buildSkillPrompt(isLlama: boolean = false): string {
     return `Skill: ${skill.name}\nDescription: ${skill.description}\nArguments:\n${args}`;
   }).join('\n\n');
 
-  if (isLlama || true) { // Unified prompt for all models to enforce exact JSON output
-    return `You are a strict function caller agent. You have access to the following skills:\n\n${skillDescriptions}\n\nCRITICAL INSTRUCTION: If the user's query perfectly matches a skill's purpose, output exactly:\n{\n  "skill": "<skill_name>",\n  "arguments": { ... }\n}\n\nIf the query is a general question or DOES NOT match any skill, you MUST output exactly:\n{\n  "skill": "none"\n}`;
+  if (isLlama || true) {
+    return `You are a function-calling coordinator. You have access to the following skills:
+
+${skillDescriptions}
+
+RULES:
+1. If the user's request matches a skill, output ONLY the JSON for that skill.
+2. If the request is a general question or doesn't match a skill, output ONLY: {"skill": "none"}
+3. DO NOT answer the user's question yourself. 
+4. DO NOT provide any text other than the JSON object.`;
   }
 }
 
@@ -199,7 +207,7 @@ export async function runSkillAgent(engine: any, userMessage: string, isLlama: b
   // Step 2: Parse the skill call
   const skillCall = parseSkillCall(content);
   if (!skillCall) {
-    return { wasSkillUsed: false, result: `No skill matched. LLM said: ${content}` };
+    return { wasSkillUsed: false, result: '' };
   }
 
   // Step 3: Execute the skill
