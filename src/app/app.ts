@@ -28,7 +28,7 @@ export class App implements OnInit, AfterViewChecked {
   showSettings = signal(false);
   isKnowledgeMode = signal(false);
   githubToken = signal('');
-  githubRepo = signal('');
+  githubRepo = signal('publichomepage/Peach');
   openaiKey = signal('');
   openaiBaseUrl = signal('https://api.openai.com');
   openaiModel = signal('');
