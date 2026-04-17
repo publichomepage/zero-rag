@@ -416,13 +416,13 @@
 
 /* ===== INPUT AREA ===== */
 .input-area {
-  padding: 12px 20px 12px;
+  padding: 16px 20px;
   border-top: 1px solid var(--border);
   background: var(--bg-glass);
   backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 
@@ -525,7 +525,7 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 4px; /* Small nudge to distance it from the input box slightly */
 }
 
 .clear-btn-wrapper {
