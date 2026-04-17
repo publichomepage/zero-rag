@@ -44,7 +44,7 @@ To deploy to GitHub Pages:
 npm run deploy
 ```
 
-This will build the project with the correct base-href (`/zero-rag/`) and push the `dist/slm/browser` folder to the `gh-pages` branch.
+This will build the project with the correct base-href (`/peach/`) and push the `dist/slm/browser` folder to the `gh-pages` branch.
 
 ## 🔒 Privacy First
 
