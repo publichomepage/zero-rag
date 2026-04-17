@@ -32,7 +32,7 @@ jobs:
           cd ..
 
       - name: Build Angular App
-        run: npx ng build --base-href /peach/
+        run: npx ng build --base-href /Peach/
 
       - name: Find Build Output
         run: find dist/SLM/browser -maxdepth 3
