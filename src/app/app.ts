@@ -406,16 +406,24 @@ export class App implements OnInit, AfterViewChecked {
         // Use OpenAI API for formatting
         let baseUrl = this.openaiBaseUrl().trim().replace(/\/+$/, '');
         
+        // Ensure OpenRouter has its /api prefix if the user just entered the domain
+        if (baseUrl.includes('openrouter.ai') && !baseUrl.includes('/api')) {
+          baseUrl = `${baseUrl}/api/v1`;
+        }
+
         // Standard OpenAI-compatible pathing
         const url = baseUrl.endsWith('/chat/completions') 
           ? baseUrl 
-          : `${baseUrl}/chat/completions`.replace(/([^:])\/\//g, '$1/');
+          : `${baseUrl}/chat/completions`.replace(/([^:])\/\/+/g, '$1/');
 
         const oaiRes = await fetch(url, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${this.openaiKey()}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            // Required by OpenRouter and others for browser-based requests
+            'HTTP-Referer': window.location.origin,
+            'X-Title': 'Zero-RAG Knowledge Bank'
           },
           body: JSON.stringify({
             model: this.openaiModel() || 'gpt-4.1-nano',
