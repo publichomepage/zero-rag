@@ -521,11 +521,28 @@
 }
 
 .input-footer {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 0;
-  position: relative;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.clear-btn-wrapper {
+  justify-self: end;
+}
+
+.clear-btn {
+  font-size: 11px;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .created-by-text {
@@ -549,20 +566,6 @@
 .input-footer .chip {
   padding: 6px 14px;
   font-size: 12px;
-}
-
-.clear-btn {
-  position: absolute;
-  right: 0;
-  font-size: 11px;
-  font-family: var(--font-sans);
-  color: var(--text-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
 }
 
 .clear-btn:hover {

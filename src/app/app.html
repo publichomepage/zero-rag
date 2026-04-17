@@ -138,9 +138,11 @@
         }
       </button>
 
-      @if (messages().length > 0 && !isKnowledgeMode()) {
-      <button class="clear-btn" (click)="clearChat()">Clear chat</button>
-      }
+      <div class="clear-btn-wrapper">
+        @if (messages().length > 0 && !isKnowledgeMode()) {
+        <button class="clear-btn" (click)="clearChat()">Clear chat</button>
+        }
+      </div>
     </div>
   </footer>
   } @else {
