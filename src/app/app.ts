@@ -95,7 +95,7 @@ export class App implements OnInit, AfterViewChecked {
     await Promise.all([
       this.searchService.loadIndex(),
       this.embeddingService.loadModel(),
-      loadSkillsFromUrls(['/skills/weather.skill.md'])
+      loadSkillsFromUrls(['skills/weather.skill.md'])
     ]);
 
     // Start loading LLM in the background (non-blocking)
