@@ -147,7 +147,6 @@ export async function executeSkill(
     url = url.replace(`{${key}}`, encodeURIComponent(value));
   }
 
-  console.log(`🔧 Executing skill "${skillName}" → ${url}`);
 
   try {
     const res = await fetch(url);
@@ -214,9 +213,8 @@ export async function runSkillAgent(engine: any, userMessage: string, isLlama: b
   }
 
   // Step 4: Format the result dynamically
-  const skillName = skillCall.skill;
   const formattedLines = Object.entries(result.data!).map(([k, v]) => `**${k}**: ${v}`);
-  const resultMarkdown = `**🔧 Skill executed: ${skillName}**\n\n${formattedLines.join('\n')}`;
+  const resultMarkdown = formattedLines.join('\n');
 
   return {
     wasSkillUsed: true,

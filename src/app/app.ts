@@ -273,7 +273,7 @@ export class App implements OnInit, AfterViewChecked {
     this.messages.update(msgs => [...msgs, { role: 'user', content: question }]);
 
     // Add waiting message
-    this.messages.update(msgs => [...msgs, { role: 'assistant', content: '🔧 Running skill agent...', isStreaming: true }]);
+    this.messages.update(msgs => [...msgs, { role: 'assistant', content: '📡 Fetching live data...', isStreaming: true }]);
 
     try {
       const engine = this.llmService.getEngine();
