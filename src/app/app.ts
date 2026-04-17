@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SearchService, SearchResult } from './services/search.service';
 import { EmbeddingService } from './services/embedding.service';
 import { LlmService, SUPPORTED_MODELS } from './services/llm.service';
-import { runToolAgent } from './services/skill-runner';
+import { runToolAgent } from './services/tool-service';
 
 interface Message {
   role: 'user' | 'assistant';
