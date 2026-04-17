@@ -1,0 +1,221 @@
+<div class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo" (click)="goHome()" title="Home">
+        <span class="logo-icon">⚡</span>
+        <h1>AI</h1>
+        <span class="badge">SLM</span>
+      </div>
+      <div class="header-actions">
+        <div class="status-indicators">
+          <div class="status-item" [class.ready]="llmReady()" [class.loading]="llmLoading()"
+            [class.unavailable]="!webGPUSupported()">
+            <span class="status-dot"></span>
+            <span class="status-label">LLM</span>
+          </div>
+        </div>
+        <button class="settings-btn" (click)="showSettings.set(true)" title="Settings">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading Banner -->
+  @if (!allReady()) {
+  <div class="loading-banner">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">
+      @if (embeddingLoading()) {
+      <span>{{ embeddingProgress() }}</span>
+      } @else if (searchLoading()) {
+      <span>Loading search index...</span>
+      } @else {
+      <span>Initializing...</span>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- LLM Progress Banner -->
+  @if (allReady() && llmLoading()) {
+  <div class="llm-banner">
+    <div class="loading-spinner small"></div>
+    <span>{{ llmProgress() }}</span>
+  </div>
+  }
+
+  @if (!webGPUSupported() && allReady() && !llmLoading()) {
+  <div class="llm-banner warning">
+    <span>⚠️ WebGPU not available — showing search results only (no AI answers)</span>
+  </div>
+  }
+
+  @if (!showSettings()) {
+  @if (!isKnowledgeMode()) {
+  <!-- Chat Area -->
+  <main class="chat-area" #chatContainer>
+    @if (messages().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h2>Ask a question</h2>
+      <p>This AI assistant runs entirely in your browser — no server required.</p>
+      <div class="suggestion-chips">
+        <button class="chip highlight" (click)="query.set('How do I set up authentication?'); submitQuery()">
+          How do I set up authentication?
+        </button>
+        <button class="chip" (click)="query.set('What databases are supported?'); submitQuery()">
+          What databases are supported?
+        </button>
+        <button class="chip" (click)="query.set('How do I deploy to Docker?'); submitQuery()">
+          How do I deploy to Docker?
+        </button>
+        <button class="chip" (click)="runToolDemo()">
+          🛠️ Test Function Calling
+        </button>
+      </div>
+    </div>
+    }
+
+    @for (msg of messages(); track $index) {
+    <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+      <div class="message-avatar">
+        @if (msg.role === 'user') {
+        <span>👤</span>
+        } @else {
+        <span>⚡</span>
+        }
+      </div>
+      <div class="message-body">
+        <div class="message-content" [innerHTML]="msg.content"></div>
+
+        @if (msg.isStreaming) {
+        <span class="cursor-blink">▊</span>
+        }
+
+        @if (msg.sources && msg.sources.length > 0) {
+        <div class="sources-section">
+          <div class="sources-header">📄 Sources</div>
+          <div class="sources-list">
+            @for (source of msg.sources; track $index) {
+            <a class="source-card" (click)="openSource(source.source)" role="button" tabindex="0">
+              <div class="source-file">{{ source.source }}</div>
+              <div class="source-heading">{{ source.heading }}</div>
+              <div class="source-score">{{ (source.score * 100).toFixed(0) }}% match</div>
+            </a>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </main>
+  }
+
+  <!-- Input Area -->
+  <footer class="input-area" [class.full-page]="isKnowledgeMode()">
+    <div class="input-wrapper" [class.knowledge-mode]="isKnowledgeMode()">
+      <textarea #queryInput class="query-input"
+        [placeholder]="isKnowledgeMode() ? 'Paste raw unstructured text here to format and push to GitHub...' : 'Ask a question...'"
+        [value]="query()" (input)="query.set($any($event.target).value)" (keydown)="onKeydown($event)"
+        [disabled]="!allReady() || isProcessing()" rows="1"></textarea>
+      <button class="send-btn" (click)="isKnowledgeMode() ? submitKnowledge() : submitQuery()"
+        [disabled]="!allReady() || isProcessing() || !query()" id="send-button">
+        @if (isProcessing()) {
+        <div class="btn-spinner"></div>
+        } @else {
+        <span>{{ isKnowledgeMode() ? '✨' : '↑' }}</span>
+        }
+      </button>
+    </div>
+    <div class="input-footer">
+      <button class="chip" [class.highlight]="isKnowledgeMode()" (click)="isKnowledgeMode.set(!isKnowledgeMode())">
+        @if (isKnowledgeMode()) {
+        <span>✕ Cancel operation</span>
+        } @else {
+        <span>📝 Add to Knowledge Bank</span>
+        }
+      </button>
+
+      @if (messages().length > 0 && !isKnowledgeMode()) {
+      <button class="clear-btn" (click)="clearChat()">Clear chat</button>
+      }
+    </div>
+  </footer>
+  } @else {
+  <!-- Settings Page -->
+  <main class="settings-page">
+    <div class="settings-header">
+      <h2>Settings</h2>
+      <button class="close-btn" (click)="showSettings.set(false)" title="Back to Chat">Back to chat ✕</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-group">
+        <label>AI Model</label>
+        <select class="model-select" [value]="selectedModelId()" (change)="onModelChange($event)"
+          [disabled]="llmLoading() || isProcessing()">
+          @for (model of supportedModels; track model.id) {
+          <option [value]="model.id" [selected]="model.id === selectedModelId()">{{ model.name }} ({{ model.size }})
+          </option>
+          }
+        </select>
+        <p class="setting-hint">Select the AI model to run locally in your browser.</p>
+      </div>
+
+      <div class="settings-section">
+        <h3>GitHub Knowledge Base</h3>
+
+        <div class="setting-group">
+          <label>GitHub Repository</label>
+          <input type="text" class="settings-input" [value]="githubRepo()"
+            (input)="githubRepo.set($any($event.target).value); saveGithubSettings()" placeholder="e.g., owner/repo">
+          <p class="setting-hint">The target repository path to upload docs (e.g. <code>VoiceSmith/navi</code>).</p>
+        </div>
+
+        <div class="setting-group">
+          <label>GitHub Classic Token</label>
+          <input type="password" class="settings-input" [value]="githubToken()"
+            (input)="githubToken.set($any($event.target).value); saveGithubSettings()" placeholder="ghp_...">
+          <p class="setting-hint">
+            Used for making commits.
+            <a href="https://github.com/settings/tokens/new?scopes=repo&description=SLM%20Knowledge%20Bank"
+              target="_blank" class="settings-link">
+              Create a Classic Token with <code>repo</code> scope
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Knowledge Bank Formatting</h3>
+
+        <div class="setting-group">
+          <label class="toggle-label">
+            <input type="checkbox" [checked]="saveAsIs()"
+              (change)="saveAsIs.set($any($event.target).checked); saveGithubSettings()">
+            <span>Save as-is (skip formatting)</span>
+          </label>
+          <p class="setting-hint">Save raw text directly without any AI formatting. Useful when your content is already
+            well-structured.</p>
+        </div>
+
+        <div class="setting-group">
+          <label>AI Formatting API</label>
+          <div class="inline-inputs">
+            <input type="text" class="settings-input" [value]="openaiBaseUrl()"
+              (input)="openaiBaseUrl.set($any($event.target).value); saveGithubSettings()" placeholder="Base URL"
+              [disabled]="saveAsIs()">
+            <input type="text" class="settings-input" [value]="openaiModel()"
+              (input)="openaiModel.set($any($event.target).value); saveGithubSettings()" placeholder="Model name"
+              [disabled]="saveAsIs()">
+          </div>
+          <input type="password" class="settings-input" [value]="openaiKey()"
+            (input)="openaiKey.set($any($event.target).value); saveGithubSettings()" placeholder="API Key (sk-...)"
+            [disabled]="saveAsIs()">
+          <p class="setting-hint">Use any OpenAI-compatible API for formatting. Leave empty to use the local SLM.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  }
+</div>
