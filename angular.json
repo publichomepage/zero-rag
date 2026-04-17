@@ -46,7 +46,13 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "public/index",
+                "output": "index"
+              },
+              {
+                "glob": "**/*",
+                "input": "public/skills",
+                "output": "skills"
               },
               {
                 "glob": "**/*.md",
