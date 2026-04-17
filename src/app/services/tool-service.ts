@@ -40,24 +40,23 @@ export function buildToolPrompt(): string {
     return `Tool: ${tool.name}\nDescription: ${tool.description}\nArguments:\n${args}`;
   }).join('\n\n');
 
-  return `You are a function-calling coordinator. You have access to the following service tools:
+  return `You are a tool coordinator. You decide if a user question needs a tool.
 
 ${toolDescriptions}
 
-If the user's request matches a tool, output a JSON object like this:
-{
-  "tool": "get_current_weather",
-  "arguments": { "location": "London", "unit": "celsius" }
-}
+EXAMPLE TOOL MATCH:
+User: "What is the weather in Paris?"
+Assistant: {"tool": "get_current_weather", "arguments": {"location": "Paris", "unit": "celsius"}}
 
-If no tool matches, output:
-{ "tool": "none" }
+EXAMPLE NO MATCH:
+User: "How do I deploy to Docker?"
+Assistant: {"tool": "none"}
 
 RULES:
-1. ONLY trigger a tool if the question is specifically about that tool's capability (e.g. weather).
-2. For ANY other question (auth, databases, general info), output ONLY: {"tool": "none"}
-3. DO NOT use <think> tags.
-4. DO NOT answer the question yourself.`;
+1. ONLY use a tool for weather-related questions.
+2. For ALL other questions, reply ONLY: {"tool": "none"}
+3. DO NOT answer the user yourself.
+4. DO NOT use <think> tags.`;
 }
 
 /**
@@ -132,10 +131,10 @@ export async function runToolAgent(engine: any, userMessage: string): Promise<{ 
 
   const messages = [
     { role: 'system', content: buildToolPrompt() },
-    { role: 'user', content: 'What is the weather in Paris?' },
-    { role: 'assistant', content: '{"tool": "get_current_weather", "arguments": {"location": "Paris", "unit": "celsius"}}' },
-    { role: 'user', content: 'How do I set up authentication?' },
+    { role: 'user', content: 'Who are you?' },
     { role: 'assistant', content: '{"tool": "none"}' },
+    { role: 'user', content: 'What is the weather in London?' },
+    { role: 'assistant', content: '{"tool": "get_current_weather", "arguments": {"location": "London", "unit": "celsius"}}' },
     { role: 'user', content: userMessage },
   ];
 
