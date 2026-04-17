@@ -252,6 +252,22 @@ export class App implements OnInit, AfterViewChecked {
     }
   }
 
+  onProviderChange(event: Event) {
+    const provider = (event.target as HTMLSelectElement).value;
+    switch (provider) {
+      case 'openai':
+        this.openaiBaseUrl.set('https://api.openai.com/v1');
+        break;
+      case 'openrouter':
+        this.openaiBaseUrl.set('https://openrouter.ai/api/v1');
+        break;
+      case 'deepseek':
+        this.openaiBaseUrl.set('https://api.deepseek.com');
+        break;
+    }
+    this.saveGithubSettings();
+  }
+
   onModelChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     if (target) {
@@ -388,22 +404,13 @@ export class App implements OnInit, AfterViewChecked {
       } else if (this.openaiKey()) {
         // Use OpenAI API for formatting
         let baseUrl = this.openaiBaseUrl().trim().replace(/\/+$/, '');
-        let url = '';
+        
+        // Standard OpenAI-compatible pathing
+        const url = baseUrl.endsWith('/chat/completions') 
+          ? baseUrl 
+          : `${baseUrl}/chat/completions`.replace(/([^:])\/\//g, '$1/');
 
-        if (baseUrl.includes('chat/completions')) {
-          url = baseUrl;
-        } else if (baseUrl.includes('openrouter.ai')) {
-          // OpenRouter standard
-          url = baseUrl.includes('/api/v1') ? `${baseUrl}/chat/completions` : `${baseUrl}/api/v1/chat/completions`;
-        } else if (baseUrl.includes('api.deepseek.com')) {
-          // DeepSeek standard (often no /v1)
-          url = baseUrl.includes('/chat/completions') ? baseUrl : `${baseUrl}/chat/completions`;
-        } else {
-          // General OpenAI standard (OpenAI, Mistral, Groq, etc.)
-          url = baseUrl.includes('/v1') ? `${baseUrl}/chat/completions` : `${baseUrl}/v1/chat/completions`;
-        }
-
-        const oaiRes = await fetch(url.replace(/([^:])\/\//g, '$1/'), {
+        const oaiRes = await fetch(url, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${this.openaiKey()}`,

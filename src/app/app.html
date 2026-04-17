@@ -205,6 +205,16 @@
         </div>
 
         <div class="setting-group">
+          <label>AI Formatting Provider</label>
+          <select class="settings-input" (change)="onProviderChange($event)" [disabled]="saveAsIs()">
+            <option value="custom">Custom / Other</option>
+            <option value="openai">OpenAI (api.openai.com/v1)</option>
+            <option value="openrouter">OpenRouter (openrouter.ai/api/v1)</option>
+            <option value="deepseek">DeepSeek (api.deepseek.com)</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
           <label>AI Formatting API</label>
           <div class="inline-inputs">
             <input type="text" class="settings-input" [value]="openaiBaseUrl()"
