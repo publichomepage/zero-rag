@@ -196,13 +196,7 @@ export async function runSkillAgent(engine: any, userMessage: string, isLlama: b
     max_tokens: 150,
   });
 
-  const usage = response.usage;
-  if (usage) {
-    console.log(`📊 Token Usage - Prompt: ${usage.prompt_tokens}, Completion: ${usage.completion_tokens}, Total: ${usage.total_tokens}`);
-  }
-
   const content = response.choices[0]?.message?.content?.trim() || '';
-  console.log('🤖 LLM Skill Response:', content);
 
   // Step 2: Parse the skill call
   const skillCall = parseSkillCall(content);

@@ -98,6 +98,7 @@ export class LlmService {
     try {
       const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
 
+      const shortName = this.selectedModelId().split('-')[0];
       this.engine = await CreateMLCEngine(this.selectedModelId(), {
         initProgressCallback: (progress: any) => {
           this.loadProgress.set(progress.text || 'Loading...');
@@ -106,7 +107,7 @@ export class LlmService {
 
       this.isLoaded.set(true);
       this.loadProgress.set('LLM ready');
-      console.log(`✅ LLM engine loaded: ${this.selectedModelId()}`);
+      console.log(`✅ LLM loaded: ${shortName}`);
     } catch (err: any) {
       this.loadProgress.set(`LLM Error: ${err.message}`);
       console.error('❌ Failed to load LLM:', err);
