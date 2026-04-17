@@ -540,11 +540,10 @@
   text-decoration: none;
 }
 
-.settings-footer {
-  padding: 24px 0;
+.created-by-text.central {
+  flex: 1;
   text-align: center;
-  border-top: 1px solid var(--border);
-  margin-top: 24px;
+  margin: 0 16px;
 }
 
 .input-footer .chip {
