@@ -97,6 +97,8 @@ export async function executeTool(
     url = url.replace(`{${key}}`, encodeURIComponent(value));
   }
 
+  console.log(`[Tool] ${toolName} -> ${url}`);
+
   try {
     const res = await fetch(url);
     const json = await res.json();
@@ -141,9 +143,12 @@ export async function runToolAgent(engine: any, userMessage: string): Promise<{ 
   });
 
   const content = response.choices[0]?.message?.content?.trim() || '';
+  console.log(`[Router] LLM output: "${content.substring(0, 100)}${content.length > 100 ? '...' : ''}"`);
+
   const toolCall = parseToolCall(content);
   
   if (!toolCall) {
+    console.log('[Router] No tool matched.');
     return { wasToolUsed: false, result: '' };
   }
 
