@@ -62,7 +62,7 @@ export class SearchService {
       });
     }
     // Fallback to local ./public/index (relative to base-href)
-    return fetch(`index/${filePath}`);
+    return fetch(`./index/${filePath}`);
   }
 
   readonly isLoaded = signal(false);
