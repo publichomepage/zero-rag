@@ -387,15 +387,18 @@ export class App implements OnInit, AfterViewChecked {
         markdownContent = rawText;
       } else if (this.openaiKey()) {
         // Use OpenAI API for formatting
-        const baseUrl = this.openaiBaseUrl().trim().replace(/\/+$/, '');
-        const oaiRes = await fetch(`${baseUrl}/v1/chat/completions`, {
+        let baseUrl = this.openaiBaseUrl().trim().replace(/\/+$/, '');
+        // OpenRouter needs /api/v1 instead of just /v1
+        let url = `${baseUrl}/v1/chat/completions`;
+        if (baseUrl.includes('openrouter.ai') && !baseUrl.includes('/api')) {
+          url = `${baseUrl}/api/v1/chat/completions`;
+        }
+
+        const oaiRes = await fetch(url, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${this.openaiKey()}`,
-            'Content-Type': 'application/json',
-            // Required by OpenRouter for browser-based requests
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'SLM Knowledge Bank'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: this.openaiModel() || 'gpt-4.1-nano',
