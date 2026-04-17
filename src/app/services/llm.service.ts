@@ -168,8 +168,8 @@ Rules:
         max_tokens: 1500,
         temperature: 0.1,
         top_p: 1.0,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
+        frequency_penalty: 0.4,
+        presence_penalty: 0.4,
       });
 
       let fullText = '';

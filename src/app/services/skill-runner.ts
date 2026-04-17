@@ -193,7 +193,9 @@ export async function runSkillAgent(engine: any, userMessage: string, isLlama: b
   const response = await engine.chat.completions.create({
     messages,
     temperature: isLlama ? 0.0 : 0.1,
-    max_tokens: 150,
+    max_tokens: 60, // Routing should be very short
+    presence_penalty: 0.3,
+    frequency_penalty: 0.3,
   });
 
   const content = response.choices[0]?.message?.content?.trim() || '';
