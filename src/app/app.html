@@ -128,6 +128,7 @@
       </button>
     </div>
     <div class="input-footer">
+      <span class="created-by-text">made by <a href="https://publichome.page/contacts" target="_blank" class="footer-link">Sandeep</a></span>
       <button class="chip" [class.highlight]="isKnowledgeMode()" (click)="isKnowledgeMode.set(!isKnowledgeMode())">
         @if (isKnowledgeMode()) {
         <span>✕ Cancel operation</span>
@@ -215,14 +216,16 @@
         </div>
       </div>
     </div>
+    <div class="settings-footer">
+      <span class="created-by-text">Zero-RAG • built by <a href="https://publichome.page/contacts" target="_blank" class="footer-link">Sandeep</a></span>
+    </div>
   </main>
   }
 
   <!-- Footer -->
   <footer class="app-footer">
     <div class="footer-text">
-       <img src="favicon.png" alt="Peach" class="footer-icon">
-       <span>built by <a href="https://publichome.page/contacts" target="_blank" class="footer-link">Sandeep</a></span>
+      <span>built by <a href="https://publichome.page/contacts" target="_blank" class="footer-link">Sandeep</a></span>
     </div>
   </footer>
 </div>

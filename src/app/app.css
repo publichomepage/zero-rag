@@ -523,9 +523,28 @@
 .input-footer {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-top: 0;
   position: relative;
+}
+
+.created-by-text {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.created-by-text a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.settings-footer {
+  padding: 24px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
 }
 
 .input-footer .chip {
