@@ -327,7 +327,7 @@ export class App implements OnInit, AfterViewChecked {
 
   openSource(source: string) {
     // Fallback to the main repo if settings are empty
-    let repo = (this.githubRepo() || 'publichomepage/zero-rag').trim();
+    let repo = (this.githubRepo() || 'publichomepage/Peach').trim();
     if (repo.endsWith('/')) repo = repo.slice(0, -1);
 
     // If source already has 'docs/' at the start, don't add it again
